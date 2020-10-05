@@ -1,0 +1,5 @@
+__pycache__/
+/lol/local_settings.py
+/node_modules
+/frontend/src/build/
+/lol/static/lol/
