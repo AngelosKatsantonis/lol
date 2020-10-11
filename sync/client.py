@@ -18,8 +18,11 @@ global divisions
 global endpoints
 global riot_api_url
 global qcodes
+global versions
+global versions_url
 
 headers = {'X-Riot-Token': settings.RIOT_TOKEN}
+versions = settings.VERSIONS
 qcodes = settings.QCODES
 conversions = settings.CONVERSIONS
 queues = settings.QUEUES
@@ -27,6 +30,8 @@ tiers = settings.TIERS
 divisions = settings.DIVISIONS
 endpoints = settings.RIOT_ENDPOINTS
 riot_api_url = settings.RIOT_API_URL
+versions_url = settings.VERSIONS_URL
+
 logger = logging.getLogger(__name__)
 
 
@@ -241,9 +246,19 @@ def convert_divisionless_league(data=None):
 
 
 def create_regions(data=None):
-    regions = [Region.objects.get_or_create(name=name[0]) for name in data]
+    regions = []
+    for each in data:
+        url = versions_url + versions[each[0]] + '.json'
+        response = requests.get(url)
+        version = response.json()['v']
+        region = Region.objects.filter(name=each[0])
+        if region.exists():
+            region.update(version=version)
+            regions.append(region.get())
+        else:
+            regions.append(Region.objects.create(name=each[0],
+                                                 version=version))
     logger.warning('Created all regions')
-    regions = [r[0] for r in regions]
     return regions
 
 
@@ -341,10 +356,13 @@ def update_region(region=None):
     logger.warning('Total timeout time was %s minutes' % (str(timeout)))
 
 
-def sync():
-    global regions
+def sync_data_dragon():
     regions = settings.REGIONS
     regions = create_regions(regions)
+
+
+def sync_summoners():
+    regions = Region.objects.all()
     threads = [threading.Thread(target=update_region, args=(
                             region,)) for region in regions]
     [x.start() for x in threads]

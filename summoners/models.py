@@ -13,6 +13,7 @@ class Region(models.Model):
                         max_length=255,
                         choices=settings.REGIONS
                     )
+    version = models.CharField(max_length=20, default='')
 
 
 class SummonerHistory(models.Model):
