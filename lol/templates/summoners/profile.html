@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Leagues{% endblock %}
+{% block content %}
+<div class="summonerform width-wrapper">
+  <form id="sform" action="{% url "search" %}" method="GET" novalidate>
+    {{ summoner_form }}
+    <button type="submit">Search</button>
+</form>
+</div>
+<div class="updateform">
+  <form action="{% url "update" id=summoner.id %}" method="GET" novalidate>
+    <button type="submit">Update</button>
+</form>
+</div>
+  {{ summoner.name }} {{ summoner.summoner_id }}
+<div class="historyform">
+  <form id="hform" action="{% url "profile" id=summoner.id %}" method="GET" novalidate>
+    {{ history_form }}
+  </form>
+</div>
+  <h3>Match History</h3>
+  <ul class="reset-list">
+  {% for match in history %}
+    <li>{{ match.game_id }} {{ match.champion }} {{ match.lane }} {{ match.human_time }}</li>
+  {% endfor %}
+  </ul>
+<div class="pagination width-wrapper">
+    <span class="step-links">
+        {% if history.has_previous %}
+            <a href="?queue={{ history_form.queue.value }}&champion={{ history_form.champion.value }}&page=1">&laquo; first</a>
+            <a href="?queue={{ history_form.queue.value }}&champion={{ history_form.champion.value }}&page={{ history.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ results.number }} of {{ results.paginator.num_pages }}
+        </span>
+
+        {% if history.has_next %}
+            <a href="?queue={{ history_form.queue.value }}&champion={{ history_form.champion.value }}&page={{ history.next_page_number }}">next</a>
+            <a href="?queue={{ history_form.queue.value }}&champion={{ history_form.champion.value }}&page={{ history.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

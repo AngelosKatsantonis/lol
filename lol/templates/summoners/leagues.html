@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Leagues{% endblock %}
+{% block content %}
+<div class="summonerform width-wrapper">
+  <form id="sform" action="{% url "search" %}" method="GET" novalidate>
+    {{ summoner_form }}
+    <button type="submit">Search</button>
+</form>
+<div class="form width-wrapper">
+  <form action="{% url "leagues" %}" method="GET" novalidate>
+    {{ form }}
+    <button type="submit">Filter</button>
+</form>
+</div>
+<div class="width-wrapper division-header">
+  <span class="summoner-name">Summoner</span>
+  <span>LP</span>
+  <span>Winrate</span>
+</div>
+<div class="width-wrapper division">
+{% if not results %}
+  <span>No results found</span>
+{% endif %}
+{% for s in results %}
+  <div class="summoner" id="{{ each.summoner.summoner_id }}">
+    <span class="summoner-name">
+      <a href="{% url 'profile' id=s.summoner.id %}">{{ s.summoner.name }}</a>
+    </span>
+    <span>{{ s.league_points }} LP</span>
+
+    <span>{{ s.wins }}W {{ s.losses }}L {{ s.winrate }} %</span>
+  </div>
+{% endfor %}
+</div>
+<div class="pagination width-wrapper">
+    <span class="step-links">
+        {% if results.has_previous %}
+            <a href="?queue={{ form.queue.value  }}&tier={{ form.tier.value }}&division={{ form.division.value }}&region={{ form.region.value }}&page=1">&laquo; first</a>
+            <a href="?queue={{ form.queue.value  }}&tier={{ form.tier.value }}&division={{ form.division.value }}&region={{ form.region.value }}&page={{ results.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ results.number }} of {{ results.paginator.num_pages }}
+        </span>
+
+        {% if results.has_next %}
+            <a href="?queue={{ form.queue.value  }}&tier={{ form.tier.value }}&division={{ form.division.value }}&region={{ form.region.value }}&page={{ results.next_page_number }}">next</a>
+            <a href="?queue={{ form.queue.value  }}&tier={{ form.tier.value }}&division={{ form.division.value }}&region={{ form.region.value }}&page={{ results.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
