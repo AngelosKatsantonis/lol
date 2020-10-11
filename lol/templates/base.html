@@ -6,6 +6,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
+<style>
+
+.division {
+  background: #F5F5F5;
+  text-align: center;
+}
+
+.form {
+  background: #D3D3D3;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+}
+
+.division-header{
+  background: black;
+  color: white;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  text-align: center
+}
+
+span {
+  display: inline-block;
+  text-align: center;
+  min-width: 100px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.summoner-name {
+  min-width: 200px;
+}
+
+.width-wrapper {
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (min-width: 1651px) {
+    width: 100%;
+  }
+  @media (max-width: 1650px) {
+    width: 92%;
+  }
+}
+
+.reset-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.pagination {
+  text-align: center;
+}
+
+</style>
 </head>
 <body>
     {% block content %}{% endblock %}
