@@ -192,3 +192,19 @@ CONVERSIONS = {
     'id': 'summoner_id',
     'gameId': 'game_id',
 }
+
+VERSIONS = {
+    'br1': 'br',
+    'eun1': 'eune',
+    'euw1': 'euw',
+    'jp1': 'jp',
+    'la1': 'lan',
+    'la2': 'las',
+    'na1': 'na',
+    'oc1': 'oce',
+    'ru': 'ru',
+    'tr1': 'tr',
+    'kr': 'kr',
+}
+
+VERSIONS_URL = 'https://ddragon.leagueoflegends.com/realms/'
