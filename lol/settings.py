@@ -14,6 +14,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'sync',
     'summoners',
+    'game_assets',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,6 +47,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -103,34 +105,42 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = '/public/'
+
 from .local_settings import *  # noqa
 
 QUEUES = [
 
     ('RANKED_SOLO_5x5', '5v5 Ranked Solo games'),
+    ('RANKED_FLEX_SR', '5v5 Ranked Flex games'),
+    ('ARAM', '5v5 ARAM games')
 ]
 
 QCODES = {
-    420: 'RANKED_SOLO_5x5',
+    'RANKED_SOLO_5x5': 420,
+    'RANKED_FLEX_SR': 440,
+    'ARAM': 450,
 }
-'''
-TIERS = [
-    ('RANKED_FLEX_SR', '5v5 Ranked Flex games'),
-    440: 'RANKED_FLEX_SR'
+
+QCODES_REVERSE = {
+    420: 'RANKED_SOLO_5x5',
+    440: 'RANKED_FLEX_SR',
+    450: 'ARAM',
+}
+
+MASTER_TIERS = [
     ('CHALLENGER', 'Challenger'),
     ('GRANDMASTER', 'Grandmaster'),
     ('MASTER', 'Master'),
+]
+
+TIERS = [
     ('DIAMOND', 'Diamond'),
     ('PLATINUM', 'Platinum'),
     ('GOLD', 'Gold'),
     ('SILVER', 'Silver'),
     ('BRONZE', 'Bronze'),
     ('IRON', 'Iron'),
-]
-'''
-TIERS = [
-    ('CHALLENGER', 'Challenger'),
-    ('DIAMOND', 'Diamond'),
 ]
 
 DIVISIONS = [
@@ -139,7 +149,7 @@ DIVISIONS = [
     ('III', 'III'),
     ('IV', 'IV'),
 ]
-'''
+
 REGIONS = [
     ('br1', 'Brazil'),
     ('eun1', 'Europe Nordic & East'),
@@ -153,11 +163,6 @@ REGIONS = [
     ('tr1', 'Turkey'),
     ('kr', 'Republic of Korea'),
 ]
-'''
-REGIONS = [
-    ('eun1', 'Europe Nordic & East'),
-    ('euw1', 'Europe West'),
-]
 
 
 RIOT_ENDPOINTS = {
@@ -168,9 +173,10 @@ RIOT_ENDPOINTS = {
     'challenger': '/lol/league/v4/challengerleagues/',
     'summoner_by_name': '/lol/summoner/v4/summoners/by-name/',
     'summoner_by_id': '/lol/summoner/v4/summoners/',
+    'summoner_by_account': '/lol/summoner/v4/summoners/by-account/',
     'summoner_history': '/lol/match/v4/matchlists/by-account/',
-    'queue_codes':
-    'http://static.developer.riotgames.com/docs/lol/queues.json',
+    'match': '/lol/match/v4/matches/',
+    'timeline': '/lol/match/v4/timelines/by-match/',
 }
 
 RIOT_API_URL = 'api.riotgames.com'
@@ -208,3 +214,32 @@ VERSIONS = {
 }
 
 VERSIONS_URL = 'https://ddragon.leagueoflegends.com/realms/'
+ALL_CHAMPIONS_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/champion.json'
+CHAMPION_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/champion/{champion}.json'
+CHAMPION_SQUARE_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/img/champion/{full}'
+CHAMPION_SPELL_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/img/spell/{full}'
+CHAMPION_PASSIVE_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/img/passive/{full}'
+
+SPELL_KEYBINDS = {
+    0: 'q',
+    1: 'w',
+    2: 'e',
+    3: 'r',
+}
+
+SUMMONER_SPELLS_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/summoner.json'
+SUMMONER_SPELL_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/img/spell/{full}'
+
+ITEMS_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/item.json'
+ITEM_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/img/item/{full}'
+
+SUMMONER_ICONS_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/profileicon.json'
+SUMMONER_ICON_URL = 'http://ddragon.leagueoflegends.com/cdn/{version}/img/profileicon/{full}'
+
+SUMMONER_POSITIONS = [
+    ('TOP', 'Top'),
+    ('MID', 'Mid'),
+    ('JUNGLE', 'Jungle'),
+    ('BOT', 'Bot'),
+    ('SUPPORT', 'Support'),
+]

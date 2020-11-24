@@ -2,12 +2,14 @@ from django import forms
 
 from lol import settings
 
-from .models import SummonerLeague, Summoner, SummonerHistory
+from .models import LeagueInfo, Summoner, History
 
 
-class SummonerLeagueForm(forms.ModelForm):
+class LeagueForm(forms.ModelForm):
+    pass
+    '''
     class Meta:
-        model = SummonerLeague
+        model = LeagueInfo
         fields = [
             'queue',
             'tier',
@@ -18,7 +20,7 @@ class SummonerLeagueForm(forms.ModelForm):
                                required=True, initial='eun1')
 
     def __init__(self, *args, **kwargs):
-        super(SummonerLeagueForm, self).__init__(*args, **kwargs)
+        super(LeagueForm, self).__init__(*args, **kwargs)
         self.fields['queue'].required = True
         self.fields['queue'].initial = 'CHALLENGER'
         self.fields['tier'].required = True
@@ -29,12 +31,14 @@ class SummonerLeagueForm(forms.ModelForm):
     def get_data(self):
         params = self.cleaned_data
         region = params.pop('region')
-        data = SummonerLeague.objects.all(
+        data = LeagueInfo.objects.all(
             ).filter(summoner__region__name=region, **params)
         return data
-
+    '''
 
 class SummonerForm(forms.ModelForm):
+    pass
+    '''
     class Meta:
         model = Summoner
         fields = [
@@ -57,11 +61,13 @@ class SummonerForm(forms.ModelForm):
         data = Summoner.objects.all(
             ).filter(region__name=region, name__iexact=name)
         return data
-
+    '''
 
 class HistoryForm(forms.ModelForm):
+    pass
+    '''
     class Meta:
-        model = SummonerHistory
+        model = History
         fields = [
             'queue',
             'champion',
@@ -82,11 +88,10 @@ class HistoryForm(forms.ModelForm):
         params = self.cleaned_data
         champion = params.pop('champion')
         queue = params.pop('queue')
-        data = SummonerHistory.objects.all(
+        data = History.objects.all(
             ).filter(summoner=summoner, queue=queue)
         return data
-        '''
-         data = SummonerHistory.objects.all(
-            ).filter(summoner=id, champion__iexact=champion, queue=queue)
-        return data
-        '''
+#         data = History.objects.all(
+#            ).filter(summoner=id, champion__iexact=champion, queue=queue)
+#        return data
+    '''

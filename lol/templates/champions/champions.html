@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Champions{% endblock %}
+{% block content %}
+<div class="champions width-wrapper">
+  {% for champion in champions %}
+    <a href="{% url 'champion_by_name' name=champion.name %}"><img src="{{ champion.icon.url }}"></a>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -4,66 +4,101 @@ from django.db import models
 
 from django.conf import settings
 
-
-class Region(models.Model):
-    class meta:
-        ordering = ['region']
-    name = models.CharField(
-                        unique=True,
-                        max_length=255,
-                        choices=settings.REGIONS
-                    )
-    version = models.CharField(max_length=20, default='')
-
-
-class SummonerHistory(models.Model):
-    class Meta:
-        ordering = ['summoner', '-timestamp']
-
-    game_id = models.CharField(max_length=255)
-    summoner = models.ForeignKey('Summoner', on_delete=models.CASCADE)
-    queue = models.CharField(max_length=50, choices=settings.QUEUES,
-                             blank=False, default='')
-    champion = models.PositiveIntegerField(default=0)
-    timestamp = models.PositiveBigIntegerField(default=0)
-    role = models.CharField(max_length=50, default='')
-    lane = models.CharField(max_length=50, default='')
-
-    def human_time(self):
-        return time.ctime(self.timestamp/1000)
+from game_assets.models import SummonerIcon, Champion
 
 
 class Summoner(models.Model):
     class Meta:
         ordering = ['name']
 
-    summoner_id = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    region = models.ForeignKey('Region', on_delete=models.CASCADE)
+    summoner_id = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=255, blank=True)
+    region = models.ForeignKey('game_assets.Region', on_delete=models.CASCADE)
     puuid = models.CharField(max_length=255, blank=True)
-    account_id = models.CharField(max_length=255, blank=True)
-    icon = models.PositiveIntegerField(default=0, blank=True)
+    account_id = models.CharField(max_length=255)
+    icon = models.CharField(max_length=10,  blank=True)
     revision = models.PositiveBigIntegerField(default=0, blank=True)
     level = models.PositiveBigIntegerField(default=0, blank=True)
 
+    def get_icon(self):
+        icon = SummonerIcon.objects.filter(key=self.icon)
+        if icon.exists():
+            return icon
+        else:
+            return None
 
-class SummonerSeries(models.Model):
-    pass
 
-
-class SummonerLeague(models.Model):
+class History(models.Model):
     class Meta:
-        ordering = ['queue', 'tier', 'division', '-league_points']
+        ordering = ['summoner']
 
-    league_id = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    summoner = models.ForeignKey('Summoner', on_delete=models.CASCADE)
+    summoner = models.ForeignKey('Summoner', on_delete=models.PROTECT)
+    champion = models.CharField(max_length=10, default='')
+    role = models.CharField(max_length=50, default='')
+    lane = models.CharField(max_length=50, default='')
+    spells = models.CharField(max_length=50, default='')
+    kills = models.PositiveIntegerField(default=0)
+    assists = models.PositiveIntegerField(default=0)
+    deaths = models.PositiveIntegerField(default=0)
+    cs = models.PositiveIntegerField(default=0)
+    gold = models.PositiveIntegerField(default=0)
+    doublekills = models.PositiveIntegerField(default=0)
+    triplekills = models.PositiveIntegerField(default=0)
+    quadrakills = models.PositiveIntegerField(default=0)
+    pentakills = models.PositiveIntegerField(default=0)
+    unrealkills = models.PositiveIntegerField(default=0)
+    items = models.CharField(max_length=50, default='')
+    skill_order = models.CharField(max_length=50, default='')
+
+    def get_champion(self):
+        champion = Champion.objects.filter(key=self.champion)
+        if champion.exists():
+            return champion
+        else:
+            return None
+
+
+class Team(models.Model):
+    team_choices = [
+        (100, 'Blue'),
+        (200, 'Red'),
+    ]
+    summoners = models.ManyToManyField(History)
+    side = models.PositiveIntegerField(choices=team_choices, default=100)
+    win = models.BooleanField(default=False)
+    barons = models.PositiveIntegerField(default=0)
+    towers = models.PositiveIntegerField(default=0)
+    inhibitors = models.PositiveIntegerField(default=0)
+    dragons = models.PositiveIntegerField(default=0)
+    riftheralds = models.PositiveIntegerField(default=0)
+    bans = models.CharField(max_length=100)
+
+
+class Match(models.Model):
+    game_id = models.CharField(max_length=255)
+    timestamp = models.PositiveBigIntegerField(default=0)
+    duration = models.PositiveBigIntegerField(default=0)
     queue = models.CharField(max_length=50, choices=settings.QUEUES,
                              blank=False, default='')
-    tier = models.CharField(max_length=50, choices=settings.TIERS,
-                            blank=False, default='')
-    division = models.CharField(
-            max_length=50, choices=settings.DIVISIONS, blank=False, default='')
+    teams = models.ManyToManyField(Team)
+
+    def human_time(self):
+        return time.ctime(self.timestamp/1000)
+
+
+class Serie(models.Model):
+    summoner = models.ForeignKey('Summoner', on_delete=models.CASCADE)
+    target = models.PositiveIntegerField(default=0)
+    wins = models.PositiveIntegerField(default=0)
+    losses = models.PositiveIntegerField(default=0)
+    progress = models.CharField(max_length=10, default='')
+
+
+class LeagueInfo(models.Model):
+    class Meta:
+        ordering = ['-league_points', 'wins']
+
+    summoner = models.ForeignKey('Summoner', on_delete=models.CASCADE)
     league_points = models.PositiveIntegerField(default=0)
     wins = models.PositiveIntegerField(default=0)
     losses = models.PositiveIntegerField(default=0)
@@ -74,6 +109,3 @@ class SummonerLeague(models.Model):
 
     def winrate(self):
         return round(self.wins/(self.wins + self.losses) * 100, 2)
-
-    def tier_v(self):
-        return dict(settings.TIERS)[self.tier]

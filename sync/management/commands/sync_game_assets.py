@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 
-from sync.client import sync_data_dragon
+from sync.game_assets_client import sync_game_assets
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        sync_data_dragon()
+        sync_game_assets()

@@ -3,3 +3,8 @@ __pycache__/
 /node_modules
 /frontend/src/build/
 /lol/static/lol/
+/public/championicons
+/public/leagueicons
+/public/spellicons
+/public/itemicons
+/public/summonericons

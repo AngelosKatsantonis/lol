@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ champion.name }}{% endblock %}
+{% block content %}
+<div class="champion width-wrapper">
+  <div>
+    <img src="{{ champion.icon.url }}"> {{ champion.name }} {{ champion.title }}
+  </div>
+  <div>
+    {% with champion.get_passive as passive %}
+      <img src="{{ passive.icon.url }}">
+    {% endwith %}
+    {% for spell in champion.get_actives %}
+      <img src="{{ spell.icon.url }}">
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

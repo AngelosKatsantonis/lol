@@ -3,9 +3,9 @@ from django.http import Http404
 from django.core.paginator import Paginator
 from django.urls import reverse
 
-from .forms import SummonerLeagueForm, SummonerForm, HistoryForm
-from .models import Summoner, SummonerHistory
-from sync.client import get_summoner_by_name
+from .forms import LeagueForm, SummonerForm, HistoryForm
+from .models import Summoner, History
+from sync.summoners_client import get_summoner_by_name
 
 
 def leagues(request, region=None):
@@ -19,7 +19,7 @@ def leagues(request, region=None):
         'tier': 'CHALLENGER',
         'division': 'I',
     }
-    form = SummonerLeagueForm(request.GET or defaults)
+    form = LeagueForm(request.GET or defaults)
     summoner_form = SummonerForm(initial={
                                  'region': (request.GET.get(
                                         'region') or region)})
@@ -49,7 +49,7 @@ def profile(request, id):
     if history_form.is_valid():
         data = history_form.get_data(summoner=summoner)
     else:
-        data = SummonerHistory.objects.filter(summoner=summoner,
+        data = History.objects.filter(summoner=summoner,
                                               queue='RANKED_SOLO_5x5').all()
     paginator = Paginator(data, 10)
     page_number = request.GET.get('page')
